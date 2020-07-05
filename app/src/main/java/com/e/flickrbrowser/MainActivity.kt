@@ -1,5 +1,6 @@
 package com.e.flickrbrowser
 
+import android.net.Uri
 import android.nfc.NdefRecord.createUri
 import android.os.Bundle
 import android.util.Log
@@ -27,7 +28,21 @@ class MainActivity : AppCompatActivity(), GetRawData.OnDownloadComplete, GetFlic
         Log.d(TAG, "onCreate ends")
     }
 
-    private fun createUri(baseURL: String, searchCiteria: String, lang: String, matchAll: Boolean)
+    private fun createUri(baseURL: String, searchCriteria: String, lang: String, matchAll: Boolean): String {
+        Log.e(TAG, ".createUri starts")
+
+        //URIをbuilderで作っている。下で一つ一つのパーツ毎に組み立てている
+        return Uri.parse(baseURL).
+            buildUpon().
+            appendQueryParameter("tags", searchCriteria).
+            appendQueryParameter("tagmode", if (matchAll) "ALL" else "ANY").
+            appendQueryParameter("lang", lang).
+            appendQueryParameter("format", "json").
+            appendQueryParameter("nojsoncallback", "1").
+            build().
+            toString()
+
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
