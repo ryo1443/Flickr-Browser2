@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 
 class FlickrImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     var thumbnail: ImageView = view.findViewById(R.id.thumbnail)
@@ -22,12 +23,19 @@ class FlickrRecyclerViewAdapter(private var photoList : List<Photo>) : RecyclerV
     }
 
     override fun getItemCount(): Int {
-        Log.d(TAG, ".getItemCount called")
+//        Log.d(TAG, ".getItemCount called")
         return if (photoList.isNotEmpty()) photoList.size else 0
     }
 
     override fun onBindViewHolder(holder: FlickrImageViewHolder, position: Int) {
+        val photoitem = photoList[position]
+//        Log.d(TAG, ".onBindViewHolder: ${photoitem.title} --> $position")
+        Picasso.get().load(photoitem.image)
+            .error(R.drawable.placeholder)
+            .placeholder(R.drawable.placeholder) //エラーや読み込み時に表示する画像をdrawableから引っ張ってきている。
+            .into(holder.thumbnail)
 
+        holder.title.text = photoitem.title
     }
 
     fun loadNewData(newPhotos: List<Photo>) { //新しいデータを得るメソッド。更新されたらnotifi~でrecyclerviewに通知される
