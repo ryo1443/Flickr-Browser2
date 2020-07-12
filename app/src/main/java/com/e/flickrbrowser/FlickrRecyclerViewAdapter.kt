@@ -24,18 +24,25 @@ class FlickrRecyclerViewAdapter(private var photoList : List<Photo>) : RecyclerV
 
     override fun getItemCount(): Int {
 //        Log.d(TAG, ".getItemCount called")
-        return if (photoList.isNotEmpty()) photoList.size else 0
+        return if (photoList.isNotEmpty()) photoList.size else 1 //1にしないとviewが無いのでエラーが表示できない
     }
 
     override fun onBindViewHolder(holder: FlickrImageViewHolder, position: Int) {
-        val photoitem = photoList[position]
+        //新しいデータが求められるたびに呼ばれる
+        if (photoList.isEmpty()) {
+            holder.thumbnail.setImageResource(R.drawable.placeholder)
+            holder.title.setText(R.string.empty_photo)
+        } else {
+            val photoItem = photoList[position]
 //        Log.d(TAG, ".onBindViewHolder: ${photoitem.title} --> $position")
-        Picasso.get().load(photoitem.image)
-            .error(R.drawable.placeholder)
-            .placeholder(R.drawable.placeholder) //エラーや読み込み時に表示する画像をdrawableから引っ張ってきている。
-            .into(holder.thumbnail)
+            Picasso.get().load(photoItem.image)
+                .error(R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder) //エラーや読み込み時に表示する画像をdrawableから引っ張ってきている。
+                .into(holder.thumbnail)
 
-        holder.title.text = photoitem.title
+            holder.title.text = photoItem.title
+        }
+
     }
 
     fun loadNewData(newPhotos: List<Photo>) { //新しいデータを得るメソッド。更新されたらnotifi~でrecyclerviewに通知される
